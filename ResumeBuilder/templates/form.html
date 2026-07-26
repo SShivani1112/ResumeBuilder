@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Resume — ResumeForge</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Resume<span>Forge</span></div>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('preview', resume_id=resume_id) }}">Preview</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="form-nav">
+      <div>
+        <span class="eyebrow">Resume #{{ resume_id }}</span>
+        <h1 style="font-size:1.5rem;margin-top:.1rem;">Fill in your details</h1>
+      </div>
+      <a class="btn" href="{{ url_for('preview', resume_id=resume_id) }}">Preview →</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+
+    <!-- ================= Personal Details ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 01</span>
+      <h2>Personal details</h2>
+      <form method="POST" action="{{ url_for('save_personal', resume_id=resume_id) }}" enctype="multipart/form-data">
+        <div class="field-row">
+          <div class="field">
+            <label for="full_name">Full name</label>
+            <input type="text" id="full_name" name="full_name" value="{{ data.personal['full_name'] if data.personal else '' }}">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ data.personal['email'] if data.personal else '' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" value="{{ data.personal['phone'] if data.personal else '' }}">
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" value="{{ data.personal['address'] if data.personal else '' }}">
+          </div>
+        </div>
+        <div class="field-row single">
+          <div class="field">
+            <label for="summary">Professional summary</label>
+            <textarea id="summary" name="summary">{{ data.personal['summary'] if data.personal else '' }}</textarea>
+          </div>
+        </div>
+        <div class="field-row single">
+          <div class="field">
+            <label for="photo">Profile photo (optional)</label>
+            <input type="file" id="photo" name="photo" accept="image/*" onchange="previewPhoto(this)">
+            <img id="photo-preview" alt="" style="display:none;width:70px;height:70px;border-radius:50%;object-fit:cover;margin-top:.4rem;">
+          </div>
+        </div>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save personal details</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Education ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 02</span>
+      <h2>Education</h2>
+      <form method="POST" action="{{ url_for('save_education', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.education %}
+            {% for e in data.education %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Degree</label><input type="text" data-field="degree" name="degree_{{ loop.index }}" value="{{ e['degree'] }}"></div>
+                <div class="field"><label>Institution</label><input type="text" data-field="institution" name="institution_{{ loop.index }}" value="{{ e['institution'] }}"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Year</label><input type="text" data-field="year" name="year_{{ loop.index }}" value="{{ e['year'] }}"></div>
+                <div class="field"><label>Grade / GPA</label><input type="text" data-field="grade" name="grade_{{ loop.index }}" value="{{ e['grade'] }}"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Degree</label><input type="text" data-field="degree" name="degree_1"></div>
+                <div class="field"><label>Institution</label><input type="text" data-field="institution" name="institution_1"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Year</label><input type="text" data-field="year" name="year_1"></div>
+                <div class="field"><label>Grade / GPA</label><input type="text" data-field="grade" name="grade_1"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Degree</label><input type="text" data-field="degree"></div>
+                <div class="field"><label>Institution</label><input type="text" data-field="institution"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Year</label><input type="text" data-field="year"></div>
+                <div class="field"><label>Grade / GPA</label><input type="text" data-field="grade"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add education</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save education</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Skills ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 03</span>
+      <h2>Skills</h2>
+      <form method="POST" action="{{ url_for('save_skills', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.skills %}
+            {% for s in data.skills %}
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Skill</label><input type="text" data-field="skill_name" name="skill_name_{{ loop.index }}" value="{{ s['skill_name'] }}"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Skill</label><input type="text" data-field="skill_name" name="skill_name_1"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Skill</label><input type="text" data-field="skill_name"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add skill</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save skills</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Projects ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 04</span>
+      <h2>Projects</h2>
+      <form method="POST" action="{{ url_for('save_projects', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.projects %}
+            {% for p in data.projects %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Title</label><input type="text" data-field="title" name="title_{{ loop.index }}" value="{{ p['title'] }}"></div>
+                <div class="field"><label>Tech used</label><input type="text" data-field="tech_used" name="tech_used_{{ loop.index }}" value="{{ p['tech_used'] }}"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description" name="description_{{ loop.index }}">{{ p['description'] }}</textarea></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Link (optional)</label><input type="text" data-field="link" name="link_{{ loop.index }}" value="{{ p['link'] }}"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Title</label><input type="text" data-field="title" name="title_1"></div>
+                <div class="field"><label>Tech used</label><input type="text" data-field="tech_used" name="tech_used_1"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description" name="description_1"></textarea></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Link (optional)</label><input type="text" data-field="link" name="link_1"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Title</label><input type="text" data-field="title"></div>
+                <div class="field"><label>Tech used</label><input type="text" data-field="tech_used"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description"></textarea></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Link (optional)</label><input type="text" data-field="link"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add project</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save projects</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Experience / Internships ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 05</span>
+      <h2>Internships / Experience</h2>
+      <form method="POST" action="{{ url_for('save_experience', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.experience %}
+            {% for x in data.experience %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Role</label><input type="text" data-field="role" name="role_{{ loop.index }}" value="{{ x['role'] }}"></div>
+                <div class="field"><label>Company</label><input type="text" data-field="company" name="company_{{ loop.index }}" value="{{ x['company'] }}"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Duration</label><input type="text" data-field="duration" name="duration_{{ loop.index }}" value="{{ x['duration'] }}" placeholder="e.g. Jun 2025 – Aug 2025"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description" name="description_{{ loop.index }}">{{ x['description'] }}</textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Role</label><input type="text" data-field="role" name="role_1"></div>
+                <div class="field"><label>Company</label><input type="text" data-field="company" name="company_1"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Duration</label><input type="text" data-field="duration" name="duration_1" placeholder="e.g. Jun 2025 – Aug 2025"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description" name="description_1"></textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Role</label><input type="text" data-field="role"></div>
+                <div class="field"><label>Company</label><input type="text" data-field="company"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Duration</label><input type="text" data-field="duration" placeholder="e.g. Jun 2025 – Aug 2025"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Description</label><textarea data-field="description"></textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add experience</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save experience</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Certifications ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 06</span>
+      <h2>Certifications</h2>
+      <form method="POST" action="{{ url_for('save_certifications', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.certifications %}
+            {% for c in data.certifications %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Certificate name</label><input type="text" data-field="name" name="name_{{ loop.index }}" value="{{ c['name'] }}"></div>
+                <div class="field"><label>Issuer</label><input type="text" data-field="issuer" name="issuer_{{ loop.index }}" value="{{ c['issuer'] }}"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Year</label><input type="text" data-field="year" name="year_{{ loop.index }}" value="{{ c['year'] }}"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Certificate name</label><input type="text" data-field="name" name="name_1"></div>
+                <div class="field"><label>Issuer</label><input type="text" data-field="issuer" name="issuer_1"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Year</label><input type="text" data-field="year" name="year_1"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row">
+                <div class="field"><label>Certificate name</label><input type="text" data-field="name"></div>
+                <div class="field"><label>Issuer</label><input type="text" data-field="issuer"></div>
+              </div>
+              <div class="field-row single">
+                <div class="field"><label>Year</label><input type="text" data-field="year"></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add certification</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save certifications</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= Achievements ================= -->
+    <div class="section-block">
+      <span class="eyebrow">Section 07</span>
+      <h2>Achievements</h2>
+      <form method="POST" action="{{ url_for('save_achievements', resume_id=resume_id) }}">
+        <div data-repeat-container>
+          {% if data.achievements %}
+            {% for a in data.achievements %}
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Achievement</label><textarea data-field="description" name="description_{{ loop.index }}">{{ a['description'] }}</textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Achievement</label><textarea data-field="description" name="description_1"></textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          {% endif %}
+          <template data-template>
+            <div class="repeat-item">
+              <div class="field-row single">
+                <div class="field"><label>Achievement</label><textarea data-field="description"></textarea></div>
+              </div>
+              <button type="button" class="remove-item">Remove</button>
+            </div>
+          </template>
+        </div>
+        <button type="button" class="add-row" data-add-btn>+ Add achievement</button>
+        <div class="section-actions">
+          <button class="btn" type="submit">Save achievements</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="section-actions" style="text-align:center;margin-top:2rem;">
+      <a class="btn" href="{{ url_for('preview', resume_id=resume_id) }}">Go to preview →</a>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

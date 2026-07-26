@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root {
+  --ink: #14202b;
+  --paper: #f2f4f1;
+  --panel: #ffffff;
+  --emerald: #1f6f5c;
+  --emerald-dark: #164f41;
+  --line: #d7ddd4;
+  --muted: #5b6a62;
+  --danger: #a3402f;
+  --radius: 3px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+}
+
+h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; margin: 0 0 .3em; }
+
+a { color: var(--emerald-dark); }
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 2rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.topbar .brand {
+  font-family: 'Fraunces', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.topbar .brand span { color: var(--emerald); }
+
+.topbar nav a {
+  margin-left: 1.2rem;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: .92rem;
+}
+
+/* ---------- Layout wrappers ---------- */
+.wrap { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+.wrap-narrow { max-width: 560px; margin: 0 auto; padding: 3rem 2rem; }
+
+/* ---------- Hero (home page) ---------- */
+.hero {
+  padding: 4.5rem 2rem 3.5rem;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(31,111,92,.05), transparent 70%);
+}
+.hero-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.hero h1 { font-size: 2.6rem; line-height: 1.1; }
+.hero p { color: var(--muted); font-size: 1.05rem; margin: .8rem 0 1.8rem; }
+
+.btn {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: .92rem;
+  padding: .7rem 1.4rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--emerald-dark);
+  background: var(--emerald);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.btn:hover { background: var(--emerald-dark); transform: translateY(-1px); }
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn.secondary:hover { border-color: var(--ink); background: transparent; }
+.btn.danger { background: var(--danger); border-color: #7d2c20; }
+.btn.danger:hover { background: #7d2c20; }
+.btn.small { padding: .4rem .8rem; font-size: .8rem; }
+
+/* ---------- Resume cards on home ---------- */
+.resume-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.resume-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+.resume-card .title { font-family: 'Fraunces', serif; font-size: 1.1rem; margin-bottom: .3rem; }
+.resume-card .meta { font-size: .78rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.resume-card .actions { margin-top: .8rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* ---------- Form ---------- */
+.section-block {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 1.6rem;
+}
+.section-block h2 { font-size: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+.section-block .eyebrow { display: block; margin-bottom: .2rem; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: .9rem; }
+.field-row.single { grid-template-columns: 1fr; }
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label { font-size: .8rem; color: var(--muted); font-weight: 500; }
+.field input, .field textarea, .field select {
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fbfbfa;
+  color: var(--ink);
+}
+.field input:focus, .field textarea:focus {
+  outline: 2px solid var(--emerald);
+  outline-offset: 1px;
+  background: #fff;
+}
+.field textarea { resize: vertical; min-height: 70px; }
+
+.repeat-item {
+  border-top: 1px dashed var(--line);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  position: relative;
+}
+.repeat-item:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+.remove-item {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .72rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 0;
+}
+
+.add-row {
+  margin-top: .6rem;
+  background: none;
+  border: 1px dashed var(--emerald);
+  color: var(--emerald-dark);
+  border-radius: var(--radius);
+  padding: .5rem .9rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .78rem;
+  cursor: pointer;
+}
+.add-row:hover { background: rgba(31,111,92,.08); }
+
+.section-actions { text-align: right; margin-top: .8rem; }
+
+.form-nav {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  padding: .8rem 0 1.2rem;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.6rem;
+}
+
+/* ---------- Preview / Resume document look ---------- */
+.resume-doc {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 2.6rem 3rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.resume-doc .doc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; border-bottom: 2px solid var(--ink); padding-bottom: 1rem; margin-bottom: 1.2rem; }
+.resume-doc .doc-name { font-size: 2rem; margin-bottom: .2rem; }
+.resume-doc .doc-contact { font-size: .85rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.resume-doc .doc-photo { width: 84px; height: 84px; object-fit: cover; border-radius: 50%; border: 1px solid var(--line); }
+.resume-doc section { margin-bottom: 1.3rem; }
+.resume-doc h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: .08em; color: var(--emerald-dark); border-bottom: 1px solid var(--line); padding-bottom: .25rem; margin-bottom: .6rem; }
+.resume-doc .entry { margin-bottom: .7rem; }
+.resume-doc .entry .line1 { font-weight: 600; }
+.resume-doc .entry .line2 { font-size: .82rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.resume-doc .entry p { margin: .3rem 0 0; font-size: .92rem; }
+.resume-doc .skill-pill {
+  display: inline-block;
+  background: #eef3ef;
+  border: 1px solid var(--line);
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  margin: 0 .3rem .3rem 0;
+}
+
+.preview-actions { max-width: 760px; margin: 1.2rem auto 0; display: flex; gap: .6rem; justify-content: flex-end; }
+
+.flash { background: #fff4e5; border: 1px solid #e0b568; padding: .6rem 1rem; border-radius: var(--radius); font-size: .88rem; margin-bottom: 1rem; }
+
+.empty-state { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--line); border-radius: var(--radius); }
+
+footer.site-footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 2rem; font-family: 'IBM Plex Mono', monospace; }
+
+@media (max-width: 640px) {
+  .field-row { grid-template-columns: 1fr; }
+  .resume-doc { padding: 1.6rem 1.4rem; }
+  .hero h1 { font-size: 2rem; }
+}

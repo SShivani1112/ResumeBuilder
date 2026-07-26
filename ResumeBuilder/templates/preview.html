@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview — ResumeForge</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Resume<span>Forge</span></div>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('edit_resume', resume_id=resume_id) }}">Edit</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="resume-doc">
+      <div class="doc-header">
+        <div>
+          <div class="doc-name">{{ data.personal['full_name'] if data.personal and data.personal['full_name'] else 'Your Name' }}</div>
+          <div class="doc-contact">
+            {{ [data.personal['email'] if data.personal else '', data.personal['phone'] if data.personal else '', data.personal['address'] if data.personal else ''] | select | join(' · ') }}
+          </div>
+        </div>
+        {% if data.personal and data.personal['photo'] %}
+          <img class="doc-photo" src="/{{ data.personal['photo'].split('ResumeBuilder/')[-1] if 'ResumeBuilder' in data.personal['photo'] else data.personal['photo'] }}" alt="Profile photo">
+        {% endif %}
+      </div>
+
+      {% if data.personal and data.personal['summary'] %}
+      <section>
+        <h3>Summary</h3>
+        <p>{{ data.personal['summary'] }}</p>
+      </section>
+      {% endif %}
+
+      {% if data.education %}
+      <section>
+        <h3>Education</h3>
+        {% for e in data.education %}
+        <div class="entry">
+          <div class="line1">{{ e['degree'] }} — {{ e['institution'] }}</div>
+          <div class="line2">{{ [e['year'], e['grade']] | select | join(' · ') }}</div>
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if data.skills %}
+      <section>
+        <h3>Skills</h3>
+        {% for s in data.skills %}
+          {% if s['skill_name'] %}<span class="skill-pill">{{ s['skill_name'] }}</span>{% endif %}
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if data.projects %}
+      <section>
+        <h3>Projects</h3>
+        {% for p in data.projects %}
+        <div class="entry">
+          <div class="line1">{{ p['title'] }}</div>
+          {% if p['description'] %}<p>{{ p['description'] }}</p>{% endif %}
+          <div class="line2">{{ [p['tech_used'], p['link']] | select | join(' · ') }}</div>
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if data.experience %}
+      <section>
+        <h3>Internships / Experience</h3>
+        {% for x in data.experience %}
+        <div class="entry">
+          <div class="line1">{{ x['role'] }} — {{ x['company'] }}</div>
+          <div class="line2">{{ x['duration'] }}</div>
+          {% if x['description'] %}<p>{{ x['description'] }}</p>{% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if data.certifications %}
+      <section>
+        <h3>Certifications</h3>
+        {% for c in data.certifications %}
+        <div class="entry">
+          <div class="line1">{{ c['name'] }}</div>
+          <div class="line2">{{ [c['issuer'], c['year']] | select | join(' · ') }}</div>
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if data.achievements %}
+      <section>
+        <h3>Achievements</h3>
+        {% for a in data.achievements %}
+        <div class="entry"><p>• {{ a['description'] }}</p></div>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </div>
+
+    <div class="preview-actions">
+      <a class="btn secondary" href="{{ url_for('edit_resume', resume_id=resume_id) }}">Edit</a>
+      <a class="btn" href="{{ url_for('download', resume_id=resume_id) }}">Download PDF</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">ResumeForge · Flask + SQLite + ReportLab</footer>
+</body>
+</html>
