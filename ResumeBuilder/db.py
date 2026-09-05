@@ -132,6 +132,10 @@ def init_db():
             FOREIGN KEY (resume_id) REFERENCES resumes(resume_id) ON DELETE CASCADE
         )
     """)
+        # Add created_at column to existing resumes table if it is missing
+    columns = [row[1] for row in cur.execute("PRAGMA table_info(resumes)")]
+    if "created_at" not in columns:
+        cur.execute("ALTER TABLE resumes ADD COLUMN created_at TIMESTAMP")
 
     conn.commit()
     conn.close()
