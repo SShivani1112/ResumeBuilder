@@ -144,7 +144,9 @@ def init_db():
 def create_resume(user_id=None, title="My Resume"):
     conn = get_db()
     cur = conn.execute(
-        "INSERT INTO resumes (user_id, title) VALUES (?, ?)", (user_id, title)
+        """INSERT INTO resumes (user_id, title, created_at)
+           VALUES (?, ?, datetime('now', '+5 hours', '+30 minutes'))""",
+        (user_id, title)
     )
     conn.commit()
     resume_id = cur.lastrowid
