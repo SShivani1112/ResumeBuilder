@@ -14,11 +14,10 @@ DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db"
 
 def get_db():
     """Return a SQLite connection with row access by column name."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
-
 
 def init_db():
     """Create all tables if they do not already exist."""
